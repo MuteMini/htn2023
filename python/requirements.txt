@@ -1,0 +1,4 @@
+keyboard
+gtts
+mediapipe
+cv2

@@ -14,14 +14,14 @@ base_options = python.BaseOptions(model_asset_path='gesture_recognizer.task')
 options = vision.GestureRecognizerOptions(base_options=base_options)
 recognizer = vision.GestureRecognizer.create_from_options(options)
 
-# drawingModule = freedomtech.solutions.drawing_utils
-# handsModule = freedomtech.solutions.hands
+drawingModule = mp.solutions.drawing_utils
+handsModule = mp.solutions.hands
 
-# mod=handsModule.Hands()
+mod=handsModule.Hands()
 
 
-# h=480
-# w=640
+h=480
+w=640
 
 # def speak(a):
 #     tts = gTTS(text=a, lang='en')
@@ -38,10 +38,18 @@ def findpostion(frame1):
         hand_landmarks = recognition_result.hand_landmarks
         results.append(top_gesture.category_name)
 
+
+    draw = mod.process(cv2.cvtColor(frame1, cv2.COLOR_BGR2RGB))
+    if draw.multi_hand_landmarks != None:
+       for handLandmarks in draw.multi_hand_landmarks:
+           drawingModule.draw_landmarks(frame1, handLandmarks, handsModule.HAND_CONNECTIONS)
+           list=[]
+           for id, pt in enumerate (handLandmarks.landmark):
+                x = int(pt.x * w)
+                y = int(pt.y * h)
+                list.append([id,x,y])
+
     return results            
-
-
-
 
 
 # def findnameoflandmark(frame1):

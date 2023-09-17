@@ -6,12 +6,21 @@ const gestureOn = ref(false);
 </script>
 
 <template>
-  <main class="d-flex flex-0-1 flex-column justify-center align-center">
-    <CameraWrapper />
-    <v-btn block rounded="lg" class="mt-5" @click="gestureOn = !gestureOn">
-      <p v-if="gestureOn">Turn Off Gesture Control</p>
-      <p v-else>Turn On Gesture Control</p>
-    </v-btn>
+  <main>
+    <v-app class="d-flex flex-1-1 flex-column justify-center align-center">
+      <CameraWrapper />
+      <v-btn
+        block
+        rounded="lg"
+        max-height="50px"
+        class="mt-5"
+        :color="gestureOn ? 'primary' : 'secondary'"
+        @click="gestureOn = !gestureOn"
+      >
+        <p v-if="gestureOn">Turn Off Gesture Control</p>
+        <p v-else>Turn On Gesture Control</p>
+      </v-btn>
+    </v-app>
   </main>
 </template>
 
@@ -25,6 +34,7 @@ const gestureOn = ref(false);
 
 /* Hide scrollbar for IE, Edge and Firefox */
 :root {
+  background-color: #264653;
   -ms-overflow-style: none;
   scrollbar-width: none;
 

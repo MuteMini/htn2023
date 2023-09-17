@@ -17,7 +17,7 @@ function onConnect(id: string) {
 </script>
 
 <template>
-  <v-card class="py-4" width="400">
+  <v-card color="primary-darken-1" class="py-4" width="500">
     <v-btn
       v-if="!showCamera"
       :loading="cameraConnecting"

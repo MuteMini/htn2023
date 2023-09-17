@@ -60,7 +60,7 @@ toggleCamera();
   <div class="d-flex flex-row justify-center">
     <video
       v-show="isCameraOpen"
-      class="rounded-sm"
+      class="ms-2 rounded"
       ref="cameraRef"
       :width="450"
       :height="337"

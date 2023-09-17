@@ -1,4 +1,6 @@
 keyboard
 gtts
 mediapipe
-cv2
+opencv-python
+websockets
+asyncio

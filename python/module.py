@@ -3,8 +3,6 @@
 #joints
 
 import cv2
-from gtts import gTTS
-import os
 
 import mediapipe as mp
 from mediapipe.tasks import python
@@ -19,14 +17,9 @@ handsModule = mp.solutions.hands
 
 mod=handsModule.Hands()
 
-
 h=480
 w=640
 
-# def speak(a):
-#     tts = gTTS(text=a, lang='en')
-#     tts.save("audio.mp3")
-#     os.system("mpg321 audio.mp3")
 def findpostion(frame1):
     results=[]
     image = cv2.cvtColor(frame1, cv2.COLOR_BGR2RGB)
@@ -38,16 +31,15 @@ def findpostion(frame1):
         hand_landmarks = recognition_result.hand_landmarks
         results.append(top_gesture.category_name)
 
-
-    draw = mod.process(cv2.cvtColor(frame1, cv2.COLOR_BGR2RGB))
-    if draw.multi_hand_landmarks != None:
-       for handLandmarks in draw.multi_hand_landmarks:
-           drawingModule.draw_landmarks(frame1, handLandmarks, handsModule.HAND_CONNECTIONS)
-           list=[]
-           for id, pt in enumerate (handLandmarks.landmark):
-                x = int(pt.x * w)
-                y = int(pt.y * h)
-                list.append([id,x,y])
+    # draw = mod.process(cv2.cvtColor(frame1, cv2.COLOR_BGR2RGB))
+    # if draw.multi_hand_landmarks != None:
+    #    for handLandmarks in draw.multi_hand_landmarks:
+    #        drawingModule.draw_landmarks(frame1, handLandmarks, handsModule.HAND_CONNECTIONS)
+    #        list=[]
+    #        for id, pt in enumerate (handLandmarks.landmark):
+    #             x = int(pt.x * w)
+    #             y = int(pt.y * h)
+    #             list.append([id,x,y])
 
     return results            
 

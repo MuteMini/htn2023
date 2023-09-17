@@ -1,16 +1,27 @@
+<!-- Based from:  https://dagomez.medium.com/vue-3-basics-camera-and-screenshot-component-ac9af7d902f2 -->
+
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
 const isCameraOpen = ref(false);
 const cameraRef = ref<HTMLVideoElement | null>(null);
 
+const ws = new WebSocket("ws://127.0.0.1:3000");
+
 onMounted(() => {
-  cameraRef.value?.focus;
+  cameraRef.value?.focus();
 });
 
 const emit = defineEmits<{
   (e: "connect", id: string): void;
 }>();
+
+const canvas = document.createElement("canvas");
+canvas.width = 620;
+canvas.height = 400;
+const ctx = canvas.getContext("2d");
+
+const number = ref(0);
 
 function createCamera() {
   const constraints = {
@@ -29,6 +40,16 @@ function createCamera() {
       alert(`${error}: The browser could not find a camera.`);
       emit("connect", "error");
     });
+  setInterval(function () {
+    if (ws.readyState != 1) clearInterval(1);
+    if (ctx && cameraRef.value) {
+      ctx.drawImage(cameraRef.value, 0, 0, canvas.width, canvas.height);
+
+      const dataURI = canvas.toDataURL("image/jpeg");
+
+      if (dataURI) ws.send(dataURI);
+    }
+  }, 50);
 }
 
 function removeCamera() {

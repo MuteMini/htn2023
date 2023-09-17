@@ -49,7 +49,7 @@ function createCamera() {
 
       if (dataURI) ws.send(dataURI);
     }
-  }, 50);
+  }, 100);
 }
 
 function removeCamera() {

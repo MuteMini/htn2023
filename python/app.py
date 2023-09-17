@@ -23,7 +23,6 @@ async def prt(websocket):
 
         cv2.imshow("Frame", frame)
         key = cv2.waitKey(1) & 0xFF
-     
 
         # if len(result) > 0:
             # match result[0]:

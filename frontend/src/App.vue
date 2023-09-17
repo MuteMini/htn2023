@@ -1,21 +1,105 @@
 <script setup lang="ts">
-import CameraWrapper from "./components/CameraWrapper.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
+const isCameraOpen = ref(false);
+const cameraRef = ref<HTMLVideoElement | null>(null);
+
+onMounted(() => {
+  cameraRef.value?.focus();
+});
+
+const cameraConnecting = ref(false);
+const showCamera = ref(false);
 const gestureOn = ref(false);
+
+const socket = ref<WebSocket>(new WebSocket("ws://127.0.0.1:3000"));
+socket.value?.addEventListener("open", () => {});
+socket.value?.addEventListener("error", () => {
+  setTimeout(() => {
+    socket.value = new WebSocket("ws://127.0.0.1:3000"); //Try reconnecting after 15 sec.
+  }, 15000);
+});
+
+const canvas = document.createElement("canvas");
+canvas.width = 620;
+canvas.height = 400;
+const ctx = canvas.getContext("2d");
+
+function createCamera() {
+  cameraConnecting.value = true;
+  showCamera.value = true;
+  const constraints = {
+    audio: false,
+    video: true,
+  };
+  navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then((stream) => {
+      if (cameraRef.value) {
+        cameraRef.value.srcObject = stream;
+        isCameraOpen.value = true;
+      }
+    })
+    .catch((error) => {
+      alert(`${error}: The browser could not find a camera.`);
+      cameraConnecting.value = false;
+      showCamera.value = false;
+    });
+}
+
+function onGestureClick() {
+  gestureOn.value = !gestureOn.value;
+
+  if (gestureOn.value) {
+    const message = setInterval(() => {
+      if (!gestureOn.value) clearInterval(message);
+
+      if (!socket.value) return;
+      if (socket.value.readyState != 1) return;
+      if (!ctx) return;
+      if (!cameraRef.value) return;
+
+      ctx.drawImage(cameraRef.value, 0, 0, canvas.width, canvas.height);
+      const dataURI = canvas.toDataURL("image/jpeg");
+      if (dataURI) socket.value?.send(dataURI);
+    }, 50);
+  }
+}
 </script>
 
 <template>
   <main>
     <v-app class="d-flex flex-1-1 flex-column justify-center align-center">
-      <CameraWrapper />
+      <v-card color="primary-darken-1" class="py-4" width="500">
+        <v-btn
+          v-if="!showCamera"
+          :loading="cameraConnecting"
+          class="flex-grow-1"
+          height="48"
+          variant="tonal"
+          @click="createCamera"
+        >
+          Connect Your Camera
+        </v-btn>
+        <div v-if="showCamera" class="d-flex flex-row justify-center">
+          <video
+            v-show="isCameraOpen"
+            class="ms-2 rounded"
+            ref="cameraRef"
+            :width="450"
+            :height="337"
+            autoplay
+            playsinline
+          ></video>
+        </div>
+      </v-card>
       <v-btn
         block
         rounded="lg"
         max-height="50px"
         class="mt-5"
         :color="gestureOn ? 'primary' : 'secondary'"
-        @click="gestureOn = !gestureOn"
+        @click="onGestureClick"
       >
         <p v-if="gestureOn">Turn Off Gesture Control</p>
         <p v-else>Turn On Gesture Control</p>

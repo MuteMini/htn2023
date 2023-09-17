@@ -12,11 +12,11 @@ const cameraConnecting = ref(false);
 const showCamera = ref(false);
 const gestureOn = ref(false);
 
-const socket = ref<WebSocket>(new WebSocket("ws://127.0.0.1:3000"));
+const socket = ref<WebSocket>(new WebSocket("ws://127.0.0.1:3001"));
 socket.value?.addEventListener("open", () => {});
 socket.value?.addEventListener("error", () => {
   setTimeout(() => {
-    socket.value = new WebSocket("ws://127.0.0.1:3000"); //Try reconnecting after 15 sec.
+    socket.value = new WebSocket("ws://127.0.0.1:3001"); //Try reconnecting after 15 sec.
   }, 15000);
 });
 
@@ -51,6 +51,7 @@ function onGestureClick() {
   gestureOn.value = !gestureOn.value;
 
   if (gestureOn.value) {
+    if(socket.value) socket.value = new WebSocket("ws://127.0.0.1:3001");
     const message = setInterval(() => {
       if (!gestureOn.value) clearInterval(message);
 

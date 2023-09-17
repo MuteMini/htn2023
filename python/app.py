@@ -14,6 +14,24 @@ def data_uri_to_cv2_img(uri):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     return img
 
+async def press(result):
+    if len(result) > 0:
+        match result[0]:
+            case 'Pointing_Up':
+                keyboard.press('up')
+            case 'Thumb_Down':
+                keyboard.press('left')
+            case 'Victory':
+                keyboard.press('f')
+            case 'Open_Palm':
+                keyboard.press('p')
+            case 'Thumb_Up':
+                keyboard.press('right')
+            case 'Closed_Fist':
+                keyboard.press('z')
+            case 'ILoveYou':
+                keyboard.press('down')
+
 async def prt(websocket):
     async for message in websocket:
         frame = data_uri_to_cv2_img(message)
@@ -21,28 +39,12 @@ async def prt(websocket):
         result = findpostion(frame)
         print(result)
 
-        cv2.imshow("Frame", frame)
-        key = cv2.waitKey(1) & 0xFF
-
-        # if len(result) > 0:
-            # match result[0]:
-            #     case 'Pointing_Up':
-            #         keyboard.press('up')
-            #     case 'Thumb_Down':
-            #         keyboard.press('left')
-            #     case 'Victory':
-            #         keyboard.press('f')
-            #     case 'Open_Palm':
-            #         keyboard.press('p')
-            #     case 'Thumb_Up':
-            #         keyboard.press('right')
-            #     case 'Closed_Fist':
-            #         keyboard.press('z')
-            #     case 'ILoveYou':
-            #         keyboard.press('down')
+        # cv2.imshow("Frame", frame)
+        # key = cv2.waitKey(1) & 0xFF
+        await press(result)
 
 async def main():
-    async with serve(prt, "127.0.0.1", 3000):
+    async with serve(prt, "127.0.0.1", 3001):
         await asyncio.Future()
 
 if __name__ == "__main__":
